@@ -1,10 +1,18 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import UserContext from "./userContext";
+
 export default function UserList(){
     let users = useContext(UserContext);
+    let [UserList,setUserList] = useState([]);
+
+    useEffect(async () => {
+        let users = await fetch("https://5cdd0a92b22718001417c19d.mockapi.io/api/users");
+        let userData = await users.json();
+        console.log(userData)
+        setUserList([...userData])
+    },[])
     return <>
-    <div class="container-fluid">
 
                     
                     <h1 class="h3 mb-2 text-gray-800">Tables</h1>
@@ -19,7 +27,8 @@ export default function UserList(){
                             <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive">
+                            {
+                                UserList.length > 0 ? <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
@@ -56,19 +65,19 @@ export default function UserList(){
                                             <td>2011/04/25</td>
                                             <td>$320,800</td>
                                             <th>
-                                                <Link to="/useredit/2">User Edit</Link>
+                                                <Link to={`/useredit/${obj.id}`}>User Edit</Link>
                                             </th>
                                         </tr>
                                             })
                                         }
                                         
-                                        
                                     </tbody>
                                 </table>
-                            </div>
-                        </div>
+                        </div> : <>
+                        <h1>Loading</h1>
+                        </>
+                         }
                     </div>
-
-                </div>
+                     </div>
     </>
 }
